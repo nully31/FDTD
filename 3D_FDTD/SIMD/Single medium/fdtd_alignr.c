@@ -54,14 +54,6 @@ double * restrict sig;
 int * restrict media_id;
 
 /*----------media update constant----------*/
-/*
-double cex0, cey0, cez0;
-double cexry0, cexrz0,
-	ceyrz0, ceyrx0,
-	cezrx0, cezry0;
-double chxry0, chxrz0,
-	chyrz0, chyrx0,
-	chzrx0, chzry0;*/
 double * restrict cex, * restrict cey, * restrict cez;
 double * restrict cexry, * restrict cexrz,
 	* restrict ceyrz, *restrict ceyrx,
@@ -134,28 +126,6 @@ void init() {
 	hz = _mm_malloc((nx) * (ny) * (nz + pad * 2) * sizeof(double), 64);
 	media_id = _mm_malloc((nx) * (ny) * (nz + pad * 2) * sizeof(int), 32);
 
-	/*
-	for (i = 0; i < nx + 1; i++) {
-		ex[i] = malloc((ny + 1) * sizeof(double *));
-		ey[i] = malloc((ny + 1) * sizeof(double *));
-		ez[i] = malloc((ny + 1) * sizeof(double *));
-		hx[i] = malloc((ny + 1) * sizeof(double *));
-		hy[i] = malloc((ny + 1) * sizeof(double *));
-		hz[i] = malloc((ny + 1) * sizeof(double *));
-		media_id[i] = malloc((ny + 1) * sizeof(int *));
-
-		for (j = 0; j < ny + 1; j++) {
-			ex[i][j] = malloc((nz + 1) * sizeof(double));
-			ey[i][j] = malloc((nz + 1) * sizeof(double));
-			ez[i][j] = malloc((nz + 1) * sizeof(double));
-			hx[i][j] = malloc((nz + 1) * sizeof(double));
-			hy[i][j] = malloc((nz + 1) * sizeof(double));
-			hz[i][j] = malloc((nz + 1) * sizeof(double));
-			media_id[i][j] = malloc((nz + 1) * sizeof(int));
-		}
-	}
-	*/
-	
 	for (i = 0; i < nx; i++) {
 		for (j = 0; j < ny; j++) {
 			for (k = 0; k < nz+pad*2; k++) {
@@ -210,26 +180,6 @@ void init() {
 
 	/*----------media constants----------*/
 	// 0: vacuum
-	/*
-	cex0 = 1.0;
-	cey0 = 1.0;
-	cez0 = 1.0;
-
-	cexry0 = (dt / epsilon0) / dy;
-	cexrz0 = (dt / epsilon0) / dz;
-	ceyrz0 = (dt / epsilon0) / dz;
-	ceyrx0 = (dt / epsilon0) / dx;
-	cezrx0 = (dt / epsilon0) / dx;
-	cezry0 = (dt / epsilon0) / dy;
-
-	chxry0 = (dt / mu0) / dy;
-	chxrz0 = (dt / mu0) / dz;
-	chyrz0 = (dt / mu0) / dz;
-	chyrx0 = (dt / mu0) / dx;
-	chzrx0 = (dt / mu0) / dx;
-	chzry0 = (dt / mu0) / dy;
-	*/
-	
 	cex[0] = 1.0;
 	cey[0] = 1.0;
 	cez[0] = 1.0;
@@ -302,31 +252,9 @@ void modeling() {
 		for (j = 0; j < ny; j++) {
 			for (k = 0; k < nz+pad*2; k++) {
 				media_id(i, j, k) = 0;
-
-				/*if (pad < k && k < 20+pad) media_id(i, j, k) = 0;
-				else if (k < 40+pad) media_id(i, j, k) = 1;
-				else if (k < 60+pad) media_id(i, j, k) = 0;
-				else if (k < 80+pad) media_id(i, j, k) = 1;
-				else if (k < 96+pad) media_id(i, j, k) = 0;*/
 			}
 		}
 	}
-
-	/*
-	// Perfect Conductor walls
-	i = nx / 3;
-	for (j = 0; j < ny / 3; j++) {
-		for (k = 0; k < nz; k++) {
-			media_id[i][j][k] = 1;
-		}
-	}
-
-	for (j = 2 * ny / 3; j < ny; j++) {
-		for (k = 0; k < nz; k++) {
-			media_id[i][j][k] = 1;
-		}
-	}*/
-	
 
 	// init with PEC(=1)
 	// up and down
@@ -356,37 +284,14 @@ void electric_field() {
         /*----------update electric field----------*/
 	int i, j, k;
 	int id;
-	
-	/*
-	__m128d xcex0 = _mm_load_sd(&cex[0]);
-	__m512d zcex0 = _mm512_broadcastsd_pd(xcex0);
-	__m128d xcexry0 = _mm_load_sd(&cexry[0]);
-	__m512d zcexry0 = _mm512_broadcastsd_pd(xcexry0);
-	__m128d xcexrz0 = _mm_load_sd(&cexrz[0]);
-	__m512d zcexrz0 = _mm512_broadcastsd_pd(xcexrz0);
-	
-	__m128d xcey0 = _mm_load_sd(&cey[0]);
-	__m512d zcey0 = _mm512_broadcastsd_pd(xcey0);
-	__m128d xceyrz0 = _mm_load_sd(&ceyrz[0]);
-	__m512d zceyrz0 = _mm512_broadcastsd_pd(xceyrz0);
-	__m128d xceyrx0 = _mm_load_sd(&ceyrx[0]);
-	__m512d zceyrx0 = _mm512_broadcastsd_pd(xceyrx0);
-
-	__m128d xcez0 = _mm_load_sd(&cez[0]);
-	__m512d zcez0 = _mm512_broadcastsd_pd(xcez0);
-	__m128d xcezrx0 = _mm_load_sd(&cezrx[0]);
-	__m512d zcezrx0 = _mm512_broadcastsd_pd(xcezrx0);
-	__m128d xcezry0 = _mm_load_sd(&cezry[0]);
-	__m512d zcezry0 = _mm512_broadcastsd_pd(xcezry0);*/
 
 	__m512d zcex, zcey, zcez;
 	__m512d zcexry, zcexrz,
 		zceyrz, zceyrx,
-		zcezrx, zcezry;			
-					
+		zcezrx, zcezry;
+
 	for (i = 1; i < nx-1; i++) {
 		for (j = 1; j < ny-1; j++) {
-			//#pragma omp simd
 			for (k = pad; k < nz+pad; k += 8) {
 				//id = media_id(i, j, k);
 				__m256i yid = _mm256_load_si256((__m256i *)&media_id(i, j, k));
@@ -400,65 +305,45 @@ void electric_field() {
 				zcezrx = _mm512_i32gather_pd(yid, &cezrx[0], 8);
 				zcezry = _mm512_i32gather_pd(yid, &cezry[0], 8);
 
-				//if (id == 0) {
-					// free space
-					__m512d hx0 = _mm512_load_pd(&hx(i, j, k));
-					__m512d hy0 = _mm512_load_pd(&hy(i, j, k));
-					__m512d hz0 = _mm512_load_pd(&hz(i, j, k));
-					
-					//ex(i, j, k) = cex0 * ex(i, j, k)
-					//	+ cexry0 * (hz(i, j, k) - hz(i, j-1, k))
-					//	- cexrz0 * (hy(i, j, k) - hy(i, j, k-1));
-					//a = a*b + ((c*d - ce) - (f*g - fh))
-					__m512d cde = zcexry * _mm512_load_pd(&hz(i, j-1, k));
-					cde = _mm512_fmsub_pd(zcexry, hz0, cde);
-					
-					__m512d hyk = _mm512_load_pd(&hy(i, j, k-8));
-					hyk = (__m512d)_mm512_alignr_epi64((__m512i)hyk, (__m512i)hy0, 0);
-					__m512d fgh = zcexrz * hyk; //_mm512_loadu_pd(&hy(i, j, k-1));
-					fgh = _mm512_fmsub_pd(zcexrz, hy0, fgh);
-					__m512d ab = _mm512_fmadd_pd(zcex, _mm512_load_pd(&ex(i, j, k)), cde - fgh);
-					_mm512_store_pd(&ex(i, j, k), ab);
-					
-					//ey(i, j, k) = cey0 * ey(i, j, k)
-					//	+ ceyrz0 * (hx(i, j, k) - hx(i, j, k-1))
-					//	- ceyrx0 * (hz(i, j, k) - hz(i-1, j, k));
-					__m512d hxk = _mm512_load_pd(&hx(i, j, k-8));
-					hxk = (__m512d)_mm512_alignr_epi64((__m512i)hxk, (__m512i)hx0, 0);
-					cde = zceyrz * hxk; //_mm512_loadu_pd(&hx(i, j, k-1);
-					cde = _mm512_fmsub_pd(zceyrz, hx0, cde);
-					fgh = zceyrx * _mm512_load_pd(&hz(i-1, j, k));
-					fgh = _mm512_fmsub_pd(zceyrx, hz0, fgh);
-					ab = _mm512_fmadd_pd(zcey, _mm512_load_pd(&ey(i, j, k)), cde - fgh);
-					_mm512_store_pd(&ey(i, j, k), ab);
-					
-					//ez(i, j, k) = cez0 * ez(i, j, k)
-					//	+ cezrx0 * (hy(i, j, k) - hy(i-1, j, k))
-					//	- cezry0 * (hx(i, j, k) - hx(i, j-1, k));
-					cde = zcezrx * _mm512_load_pd(&hy(i-1, j, k));
-					cde = _mm512_fmsub_pd(zcezrx, hy0, cde);
-					fgh = zcezry * _mm512_load_pd(&hx(i, j-1, k));
-					fgh = _mm512_fmsub_pd(zcezry, hx0, fgh);
-					ab = _mm512_fmadd_pd(zcez, _mm512_load_pd(&ez(i, j, k)), cde - fgh);
-					_mm512_store_pd(&ez(i, j, k), ab);
+				__m512d hx0 = _mm512_load_pd(&hx(i, j, k));
+				__m512d hy0 = _mm512_load_pd(&hy(i, j, k));
+				__m512d hz0 = _mm512_load_pd(&hz(i, j, k));
 
-				/*} else if (id == 1) {
-					// perfect conductor
-					ex[i][j][k] = 0.0;
-					ey[i][j][k] = 0.0;
-					ez[i][j][k] = 0.0;
-				} else {
-					// arbitrary media
-					ex[i][j][k] = cex[id] * ex[i][j][k]
-						+ cexry[id] * (hz[i][j][k] - hz[i][j-1][k])
-						- cexrz[id] * (hy[i][j][k] - hy[i][j][k-1]);
-					ey[i][j][k] = cey[id] * ey[i][j][k]
-						+ ceyrz[id] * (hx[i][j][k] - hx[i][j][k-1])
-						- ceyrx[id] * (hz[i][j][k] - hz[i-1][j][k]);
-					ez[i][j][k] = cez[id] * ez[i][j][k]
-						+ cezrx[id] * (hy[i][j][k] - hy[i-1][j][k])
-						- cezry[id] * (hx[i][j][k] - hx[i][j-1][k]);
-				}*/
+				//ex(i, j, k) = cex0 * ex(i, j, k)
+				//	+ cexry0 * (hz(i, j, k) - hz(i, j-1, k))
+				//	- cexrz0 * (hy(i, j, k) - hy(i, j, k-1));
+				//a = a*b + ((c*d - ce) - (f*g - fh))
+				__m512d cde = zcexry * _mm512_load_pd(&hz(i, j-1, k));
+				cde = _mm512_fmsub_pd(zcexry, hz0, cde);
+
+				__m512d hyk = _mm512_load_pd(&hy(i, j, k-8));
+				hyk = (__m512d)_mm512_alignr_epi64((__m512i)hyk, (__m512i)hy0, 0);
+				__m512d fgh = zcexrz * hyk; //_mm512_loadu_pd(&hy(i, j, k-1));
+				fgh = _mm512_fmsub_pd(zcexrz, hy0, fgh);
+				__m512d ab = _mm512_fmadd_pd(zcex, _mm512_load_pd(&ex(i, j, k)), cde - fgh);
+				_mm512_store_pd(&ex(i, j, k), ab);
+
+				//ey(i, j, k) = cey0 * ey(i, j, k)
+				//	+ ceyrz0 * (hx(i, j, k) - hx(i, j, k-1))
+				//	- ceyrx0 * (hz(i, j, k) - hz(i-1, j, k));
+				__m512d hxk = _mm512_load_pd(&hx(i, j, k-8));
+				hxk = (__m512d)_mm512_alignr_epi64((__m512i)hxk, (__m512i)hx0, 0);
+				cde = zceyrz * hxk; //_mm512_loadu_pd(&hx(i, j, k-1);
+				cde = _mm512_fmsub_pd(zceyrz, hx0, cde);
+				fgh = zceyrx * _mm512_load_pd(&hz(i-1, j, k));
+				fgh = _mm512_fmsub_pd(zceyrx, hz0, fgh);
+				ab = _mm512_fmadd_pd(zcey, _mm512_load_pd(&ey(i, j, k)), cde - fgh);
+				_mm512_store_pd(&ey(i, j, k), ab);
+
+				//ez(i, j, k) = cez0 * ez(i, j, k)
+				//	+ cezrx0 * (hy(i, j, k) - hy(i-1, j, k))
+				//	- cezry0 * (hx(i, j, k) - hx(i, j-1, k));
+				cde = zcezrx * _mm512_load_pd(&hy(i-1, j, k));
+				cde = _mm512_fmsub_pd(zcezrx, hy0, cde);
+				fgh = zcezry * _mm512_load_pd(&hx(i, j-1, k));
+				fgh = _mm512_fmsub_pd(zcezry, hx0, fgh);
+				ab = _mm512_fmadd_pd(zcez, _mm512_load_pd(&ez(i, j, k)), cde - fgh);
+				_mm512_store_pd(&ez(i, j, k), ab);
 			}
 		}
 	}
@@ -520,30 +405,13 @@ void magnetic_field() {
 	/*----------update magnetic field----------*/
 	int i, j, k;
 	int id;
-	
-	/*
-	__m128d xchxry0 = _mm_load_sd(&chxry[0]);
-	__m512d zchxry0 = _mm512_broadcastsd_pd(xchxry0);
-	__m128d xchxrz0 = _mm_load_sd(&chxrz[0]);
-	__m512d zchxrz0 = _mm512_broadcastsd_pd(xchxrz0);
-	
-	__m128d xchyrz0 = _mm_load_sd(&chyrz[0]);
-	__m512d zchyrz0 = _mm512_broadcastsd_pd(xchyrz0);
-	__m128d xchyrx0 = _mm_load_sd(&chyrx[0]);
-	__m512d zchyrx0 = _mm512_broadcastsd_pd(xchyrx0);
-	
-	__m128d xchzrx0 = _mm_load_sd(&chzrx[0]);
-	__m512d zchzrx0 = _mm512_broadcastsd_pd(xchzrx0);
-	__m128d xchzry0 = _mm_load_sd(&chzry[0]);
-	__m512d zchzry0 = _mm512_broadcastsd_pd(xchzry0);*/
-	
+
 	__m512d zchxry, zchxrz,
 		zchyrz, zchyrx,
 		zchzrx, zchzry;
 
 	for (i = 1; i < nx-1; i++) {
 		for (j = 1; j < ny-1; j++) {
-			//#pragma omp simd
 			for (k = pad; k < nz+pad; k += 8) {
 				//id = media_id(i, j, k);
 				__m256i yid = _mm256_load_si256((__m256i *)&media_id(i, j, k));
@@ -554,59 +422,37 @@ void magnetic_field() {
 				zchyrx = _mm512_i32gather_pd(yid, &chyrx[0], 8);
 				zchzrx = _mm512_i32gather_pd(yid, &chzrx[0], 8);
 				zchzry = _mm512_i32gather_pd(yid, &chzry[0], 8);
-				
 
-				//if (id == 0) {
-					// free space
-					__m512d ex0 = _mm512_load_pd(&ex(i, j, k));
-					__m512d ey0 = _mm512_load_pd(&ey(i, j, k));
-					__m512d ez0 = _mm512_load_pd(&ez(i, j, k));
-					
-					
-					
-					//hx(i, j, k) = hx(i, j, k)
-					//	- chxry0 * (ez(i, j+1, k) - ez(i, j, k))
-					//	+ chxrz0 * (ey(i, j, k+1) - ey(i, j, k));
-					//a = a - (b*c - bd) + (e*f - eg)
-					__m512d bcd = _mm512_fmsub_pd(zchxry, _mm512_load_pd(&ez(i, j+1, k)), zchxry * ez0);
-					__m512d eyk = _mm512_load_pd(&ey(i, j, k+8));
-					eyk = (__m512d)_mm512_alignr_epi64((__m512i)ey0, (__m512i)eyk, 6);
-					__m512d efg = _mm512_fmsub_pd(zchxrz, eyk /*_mm512_loadu_pd(&ey(i, j, k+1))*/, zchxrz * ey0);
-					_mm512_store_pd(&hx(i, j, k), _mm512_load_pd(&hx(i, j, k)) - bcd + efg);
-					
-					//hy(i, j, k) = hy(i, j, k)
-					//	- chyrz0 * (ex(i, j, k+1) - ex(i, j, k))
-					//	+ chyrx0 * (ez(i+1, j, k) - ez(i, j, k));
-					__m512d exk = _mm512_load_pd(&ex(i, j, k+8));
-					exk = (__m512d)_mm512_alignr_epi64((__m512i)ex0, (__m512i)exk, 6);
-					bcd = _mm512_fmsub_pd(zchyrz, exk /*_mm512_loadu_pd(&ex(i, j, k+1))*/, zchyrz * ex0);
-					efg = _mm512_fmsub_pd(zchyrx, _mm512_load_pd(&ez(i+1, j, k)), zchyrx * ez0);
-					_mm512_store_pd(&hy(i, j, k), _mm512_load_pd(&hy(i, j, k)) - bcd + efg);
 
-					//hz(i, j, k) = hz(i, j, k)
-					//	- chzrx0 * (ey(i+1, j, k) - ey(i, j, k))
-					//	+ chzry0 * (ex(i, j+1, k) - ex(i, j, k));
-					bcd = _mm512_fmsub_pd(zchzrx, _mm512_load_pd(&ey(i+1, j, k)), zchzrx * ey0);
-					efg = _mm512_fmsub_pd(zchzry, _mm512_load_pd(&ex(i, j+1, k)), zchzry * ex0);
-					_mm512_store_pd(&hz(i, j, k), _mm512_load_pd(&hz(i, j, k)) - bcd + efg);
+				__m512d ex0 = _mm512_load_pd(&ex(i, j, k));
+				__m512d ey0 = _mm512_load_pd(&ey(i, j, k));
+				__m512d ez0 = _mm512_load_pd(&ez(i, j, k));
 
-				/*} else if (id == 1) {
-					// perfect conductor
-					hx[i][j][k] = 0.0;
-					hy[i][j][k] = 0.0;
-					hz[i][j][k] = 0.0;
-				} else {
-					// arbitrary media
-					hx[i][j][k] = hx[i][j][k]
-						- chxry[id] * (ez[i][j+1][k] - ez[i][j][k])
-						+ chxry[id] * (ey[i][j][k+1] - ey[i][j][k]);
-					hy[i][j][k] = hy[i][j][k]
-						- chyrz[id] * (ex[i][j][k+1] - ex[i][j][k])
-						+ chyrx[id] * (ez[i+1][j][k] - ez[i][j][k]);
-					hz[i][j][k] = hz[i][j][k]
-						- chzrx[id] * (ey[i+1][j][k] - ey[i][j][k])
-						+ chzry[id] * (ex[i][j+1][k] - ex[i][j][k]);
-				}*/
+				//hx(i, j, k) = hx(i, j, k)
+				//	- chxry0 * (ez(i, j+1, k) - ez(i, j, k))
+				//	+ chxrz0 * (ey(i, j, k+1) - ey(i, j, k));
+				//a = a - (b*c - bd) + (e*f - eg)
+				__m512d bcd = _mm512_fmsub_pd(zchxry, _mm512_load_pd(&ez(i, j+1, k)), zchxry * ez0);
+				__m512d eyk = _mm512_load_pd(&ey(i, j, k+8));
+				eyk = (__m512d)_mm512_alignr_epi64((__m512i)ey0, (__m512i)eyk, 6);
+				__m512d efg = _mm512_fmsub_pd(zchxrz, eyk /*_mm512_loadu_pd(&ey(i, j, k+1))*/, zchxrz * ey0);
+				_mm512_store_pd(&hx(i, j, k), _mm512_load_pd(&hx(i, j, k)) - bcd + efg);
+
+				//hy(i, j, k) = hy(i, j, k)
+				//	- chyrz0 * (ex(i, j, k+1) - ex(i, j, k))
+				//	+ chyrx0 * (ez(i+1, j, k) - ez(i, j, k));
+				__m512d exk = _mm512_load_pd(&ex(i, j, k+8));
+				exk = (__m512d)_mm512_alignr_epi64((__m512i)ex0, (__m512i)exk, 6);
+				bcd = _mm512_fmsub_pd(zchyrz, exk /*_mm512_loadu_pd(&ex(i, j, k+1))*/, zchyrz * ex0);
+				efg = _mm512_fmsub_pd(zchyrx, _mm512_load_pd(&ez(i+1, j, k)), zchyrx * ez0);
+				_mm512_store_pd(&hy(i, j, k), _mm512_load_pd(&hy(i, j, k)) - bcd + efg);
+
+				//hz(i, j, k) = hz(i, j, k)
+				//	- chzrx0 * (ey(i+1, j, k) - ey(i, j, k))
+				//	+ chzry0 * (ex(i, j+1, k) - ex(i, j, k));
+				bcd = _mm512_fmsub_pd(zchzrx, _mm512_load_pd(&ey(i+1, j, k)), zchzrx * ey0);
+				efg = _mm512_fmsub_pd(zchzry, _mm512_load_pd(&ex(i, j+1, k)), zchzry * ex0);
+				_mm512_store_pd(&hz(i, j, k), _mm512_load_pd(&hz(i, j, k)) - bcd + efg);
 			}
 		}
 	}
@@ -615,12 +461,12 @@ void magnetic_field() {
 void output() {
 	int i = 4, j = 1;
 	int k = (nz+pad*2)/2+0;
-	//for (int i = 0; i < nx; i++) {
-	//  	for (int j = 0; j < ny; j++) {
-			printf("%d %d %.12f\n", i, j, ez(i, j, k));
+	//	for (int i = 0; i < nx; i++) {
+	//  		for (int j = 0; j < ny; j++) {
+				printf("%d %d %.12f\n", i, j, ez(i, j, k));
+	//		}
 	//	}
-	//}
-	//printf("\n\n");
+	//	printf("\n\n");
 }
 
 void free_all() {
