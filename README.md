@@ -16,14 +16,14 @@ icc 2d_fdtd.c -o 2d_fdtd -O3
 
 In `3D_FDTD/SIMD`, you may want to use the shell script in the folder to compile and execute.
 
-## USAGE
-# 2D_FDTD_TE and 3D_FDTD/Sequential
+# USAGE
+## 2D_FDTD_TE and 3D_FDTD/Sequential
 Execute the executables and redirect the output to `result.dat` so you can plot the simulation results in gnuplot.
 1. `$ ./2d_fdtd > result.dat`
 2. `$ gnuplot`
 3. `(in gnuplot) >load "plot_2d.gp"`
 
-# 3D_FDTD/SIMD
+## 3D_FDTD/SIMD
 Use the shell scripts to and execute. Enter a dimension size and max time step to simulate.
 Please note that the given dimension size must be dividable by 8.
 1. `$ sh execute.sh ($size) ($time step)`
