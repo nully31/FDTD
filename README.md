@@ -2,7 +2,7 @@ A Finite Differential Time Domain (FDTD) method program for electro-magnetic fie
 
 
 `2D_FDTD_TE` contains files for 2D FDTD simulation, and `3D_FDTD/Sequential` are for 3D FDTD.
-Each source file has a different perfect magnetic conductor model.
+Each source file has a different perfect magnetic conductor (PMC) model.
 
 
 Files in `3D_FDTD/SIMD` are for SIMD optimizations of 3D FDTD simulation.
