@@ -28,3 +28,8 @@ Execute the executables and redirect the output to `result.dat` so you can plot 
 Use the shell scripts to and execute. Enter a dimension size and max time step to simulate.
 Please note that the given dimension size must be dividable by 8.
 1. `$ sh execute.sh ($size) ($time step)`
+
+# References
+- 橋本 修, "FDTD時間領域差分法入門"
+- 宇野 亨, "FDTD法による電磁界およびアンテナ解析"
+- 平野拓一, ["FDTD法"](http://www.takuichi.net/em_analysis/fdtd/fdtd.html)
