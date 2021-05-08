@@ -1,5 +1,5 @@
 // 3D FDTD Program for sequential computation.
-// The model for this simulation is the vacuum space covered by perfect magnetic conductor (PMC).
+// The model for this simulation is the vacuum space covered by perfect electric conductor (PEC).
 // Please compile with `openmp` and `no-vec` options.
 // Enter a size of each dimension that can be divided by 8 for command line arguments when execute.
 

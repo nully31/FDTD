@@ -1,5 +1,5 @@
 // 3D FDTD Program for SIMD-vectorization by intrinsics.
-// The model for this simulation is the vacuum space covered by perfect magnetic conductor (PMC).
+// The model for this simulation is the vacuum space covered by perfect electric conductor (PEC).
 // Arrays are zero-padded to exclude boundaries from the start of 64 byte alignments.
 // This program uses `alinq` instruction to reduce a few loads.
 // Please compile with `openmp` and `avx512` options.

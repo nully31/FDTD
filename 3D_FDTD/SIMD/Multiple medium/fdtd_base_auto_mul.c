@@ -1,5 +1,5 @@
 // 3D FDTD Program for auto SIMD-vectorization by OpenMP (you may need `Intel C Compiler (icc)` in order to auto vectorize).
-// The model for this simulation has multiple medium in the space covered by perfect magnetic conductor (PMC).
+// The model for this simulation has multiple medium in the space covered by perfect electric conductor (PEC).
 // Please compile with `openmp` options.
 // Enter a size of each dimension that can be divided by 8 for command line arguments when execute.
 

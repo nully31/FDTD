@@ -2,13 +2,13 @@ A Finite Differential Time Domain (FDTD) method program for electro-magnetic fie
 
 
 `2D_FDTD_TE` contains files for 2D FDTD simulation, and `3D_FDTD/Sequential` are for 3D FDTD.
-Each source file has a different perfect magnetic conductor (PMC) model.
+Each source file has a different perfect electric conductor (PEC) model.
 
 
 Files in `3D_FDTD/SIMD` are for AVX-512 SIMD optimizations of 3D FDTD simulation.
 You may want to use `Intel C Compiler (icc)` for best performance.
 
-# BUILD
+# COMPILE
 Compile the source files in these folders just like other normal C programs, no additional options required except `3D_FDTD/SIMD`.
 
 ```
