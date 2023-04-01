@@ -1,5 +1,6 @@
-A Finite Differential Time Domain (FDTD) method program for electro-magnetic field simulation, written in C.
+[![GLWTPL](https://img.shields.io/badge/GLWT-Public_License-red.svg)](https://github.com/me-shaon/GLWTPL)
 
+A Finite Differential Time Domain (FDTD) method program for electro-magnetic field simulation, written in C.
 
 `2D_FDTD_TE` contains files for 2D FDTD simulation, and `3D_FDTD/Sequential` are for 3D FDTD.
 Each source file has a different perfect electric conductor (PEC) model.
